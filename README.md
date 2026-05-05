@@ -1,8 +1,8 @@
 # Kotlin Multiplatform
 | Modul | Judul                       | Status        |
 |-------|-----------------------------|---------------|
-| 2     | Build Your First App        | Belum Selesai |
-| 3     | Working with Images         | Belum Selesai |
+| 2     | Build Your First App        | Selesai       |
+| 3     | Working with Images         | Selesai       |
 | 4     | Get User Input              | Belum Selesai |
 | 5     | App Navigation              | Belum Selesai |
 | 7     | Scrollable List             | Belum Selesai |
