@@ -1,12 +1,11 @@
 package com.nikola0055.kmp
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -15,13 +14,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.nikola0055.kmp.ui.theme.AppTheme
 import kmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
@@ -29,11 +29,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 @Preview
 fun App() {
-    val darkTheme = isSystemInDarkTheme()
-
-    MaterialTheme(
-        colorScheme = if (darkTheme) darkColorScheme() else lightColorScheme()
-    ) {
+    AppTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -59,21 +55,39 @@ fun ScreenContent(
 ) {
     var number by remember { mutableIntStateOf(0) }
 
-    Column(
+    Row(
         modifier = modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = number.toString(),
-            style = MaterialTheme.typography.displayLarge,
-        )
         Button(
             onClick = { number++ },
-            modifier = Modifier.fillMaxWidth(0.5f).padding(top = 16.dp),
+            shape = CircleShape,
             contentPadding = PaddingValues(16.dp)
         ) {
-            Text(stringResource(Res.string.count))
+            Text(
+                text = "+",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
+        }
+
+        Text(
+            text = number.toString(),
+            modifier = Modifier.padding(32.dp),
+            style = MaterialTheme.typography.displayLarge
+        )
+
+        Button(
+            onClick = { if (number > 0) number-- },
+            shape = CircleShape,
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            Text(
+                text = "-",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
         }
     }
 }
