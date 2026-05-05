@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Mopro KMP</string>
-    <string name="count">Count +1</string>
+    <string name="status">Lampu %1$s</string>
+    <string name="nyala">Hidupkan</string>
+    <string name="mati">Matikan</string>
 </resources>
