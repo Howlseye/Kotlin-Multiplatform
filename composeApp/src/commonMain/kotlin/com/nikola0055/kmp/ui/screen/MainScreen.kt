@@ -1,14 +1,14 @@
 package com.nikola0055.kmp.ui.screen
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -18,7 +18,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,17 +30,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import kmp.composeapp.generated.resources.*
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.text.all
 
@@ -71,20 +66,15 @@ fun MainScreen() {
 fun ScreenContent(
     modifier: Modifier = Modifier
 ) {
-    var berat by remember { mutableStateOf("") }
-    var beratError by remember { mutableStateOf(false) }
+    var panjang by remember { mutableStateOf("") }
+    var panjangError by remember { mutableStateOf(false) }
 
-    var tinggi by remember { mutableStateOf("") }
-    var tinggiError by remember { mutableStateOf(false) }
+    var lebar by remember { mutableStateOf("") }
+    var lebarError by remember { mutableStateOf(false) }
 
-    val radioOptions = listOf(
-        Res.string.pria,
-        Res.string.wanita
-    )
-    var gender by remember { mutableStateOf(radioOptions[0]) }
 
-    var bmi by remember { mutableFloatStateOf(0f) }
-    var kategori by remember { mutableStateOf<StringResource?>(null) }
+    var luas by remember { mutableFloatStateOf(0f) }
+    var keliling by remember { mutableFloatStateOf(0f) }
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -94,31 +84,31 @@ fun ScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(Res.string.bmi_intro),
+            text = stringResource(Res.string.intro),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = berat,
-            onValueChange = { beratValue ->
-                if (beratValue.all { it.isDigit() }) {
-                    berat = beratValue
+            value = panjang,
+            onValueChange = { panjangValue ->
+                if (panjangValue.all { it.isDigit() || it == '.' } && panjangValue != ".") {
+                    panjang = panjangValue
                 }
             },
             label = {
-                Text(text = stringResource(Res.string.berat_badan))
+                Text(text = stringResource(Res.string.panjang))
             },
             trailingIcon = {
                 IconPicker(
-                    isError = beratError,
-                    unit = "kg"
+                    isError = panjangError,
+                    unit = "cm"
                 )
             },
-            isError = beratError,
+            isError = panjangError,
             supportingText = {
                 ErrorHint(
-                    isError = beratError
+                    isError = panjangError
                 )
             },
             singleLine = true,
@@ -129,25 +119,25 @@ fun ScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
-            value = tinggi,
-            onValueChange = { tinggiValue ->
-                if (tinggiValue.all { it.isDigit() }) {
-                    tinggi = tinggiValue
+            value = lebar,
+            onValueChange = { lebarValue ->
+                if (lebarValue.all { it.isDigit() || it == '.' } && lebarValue != ".") {
+                    lebar = lebarValue
                 }
             },
             label = {
-                Text(text = stringResource(Res.string.tinggi_badan))
+                Text(text = stringResource(Res.string.lebar))
             },
             trailingIcon = {
                 IconPicker(
-                    isError = tinggiError,
+                    isError = lebarError,
                     unit = "cm"
                 )
             },
-            isError = tinggiError,
+            isError = lebarError,
             supportingText = {
                 ErrorHint(
-                    isError = tinggiError
+                    isError = lebarError
                 )
             },
             singleLine = true,
@@ -157,95 +147,55 @@ fun ScreenContent(
             ),
             modifier = Modifier.fillMaxWidth()
         )
+
         Row(
-            modifier = Modifier
-                .padding(top = 6.dp)
-                .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            radioOptions.forEach { item ->
-                GenderOption(
-                    label = stringResource(item),
-                    isSelected = item == gender,
-                    modifier = Modifier.weight(1f).padding(16.dp).selectable(
-                        selected = item == gender,
-                        onClick = { gender = item },
-                        role = Role.RadioButton
-                    )
-                )
+            Button(
+                onClick = {
+                    panjangError = panjang.isBlank() || panjang.toFloat() <= 0
+                    lebarError = lebar.isBlank() || lebar.toFloat() <= 0
+                    if (panjangError || lebarError) return@Button
+
+                    luas = luas(panjang.toFloat(), lebar.toFloat())
+                    keliling = keliling(panjang.toFloat(), lebar.toFloat())
+                },
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Text(text = stringResource(Res.string.hitung))
+            }
+
+            Spacer(Modifier.width(16.dp))
+
+            Button(
+                onClick = {
+                    panjang = ""
+                    lebar = ""
+                    panjangError = false
+                    lebarError = false
+                    luas = 0f
+                    keliling = 0f
+                },
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Text(text = stringResource(Res.string.reset))
             }
         }
 
-        Button(
-            onClick = {
-                beratError = berat.isBlank() || berat.toFloat() <= 0
-                tinggiError = tinggi.isBlank() || tinggi.toFloat() <= 0
-                if (beratError || tinggiError) return@Button
-
-
-                bmi = hitungBMI(berat.toFloat(), tinggi.toFloat())
-                kategori = getKategori(bmi, gender == radioOptions[0])
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(4.dp),
-        ) {
-            Text(text = stringResource(Res.string.hitung))
-        }
-
-        if (bmi != 0f) {
+        if (luas != 0f && keliling != 0f) {
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp,
             )
             Text(
-                text = stringResource(Res.string.bmi_x, ((bmi * 100).roundToInt() / 100f).toString()),
+                text = stringResource(Res.string.luas_x, ((luas * 100).roundToInt() / 100f).toString()),
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = kategori?.let { stringResource(it) }?.uppercase() ?: "",
-                style = MaterialTheme.typography.headlineLarge
+                text = stringResource(Res.string.keliling_x, ((keliling * 100).roundToInt() / 100f).toString()),
+                style = MaterialTheme.typography.titleLarge
             )
-        }
-    }
-}
-
-@Composable
-fun GenderOption(
-    label: String,
-    isSelected: Boolean,
-    modifier: Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            onClick = null
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-    }
-}
-
-private fun hitungBMI(berat: Float, tinggi: Float): Float {
-    return berat / ((tinggi / 100).pow(2))
-}
-
-private fun getKategori(bmi: Float, isMale: Boolean): StringResource {
-    return if (isMale) {
-        when {
-            bmi < 20.5 -> Res.string.kurus
-            bmi >= 27.0 -> Res.string.gemuk
-            else -> Res.string.ideal
-        }
-    } else {
-        when {
-            bmi < 18.5 -> Res.string.kurus
-            bmi >= 25.0 -> Res.string.gemuk
-            else -> Res.string.ideal
         }
     }
 }
@@ -272,4 +222,12 @@ fun ErrorHint(
     if (isError) {
         Text(stringResource(Res.string.input_invalid))
     }
+}
+
+private fun luas(panjang: Float, lebar: Float): Float {
+    return panjang * lebar
+}
+
+private fun keliling(panjang: Float, lebar: Float): Float {
+    return 2 * (panjang + lebar)
 }
