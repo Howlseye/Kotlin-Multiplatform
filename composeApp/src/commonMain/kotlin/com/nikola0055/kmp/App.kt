@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
+import com.nikola0055.kmp.navigation.SetupNavGraph
 import com.nikola0055.kmp.ui.screen.MainScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,6 +19,6 @@ fun App() {
     MaterialTheme(
         colorScheme = if (darkTheme) darkColorScheme() else lightColorScheme()
     ) {
-        MainScreen()
+        SetupNavGraph()
     }
 }
