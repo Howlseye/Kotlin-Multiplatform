@@ -1,15 +1,15 @@
 package com.nikola0055.kmp.ui.screen
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -37,17 +37,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.RadioButton
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
 import androidx.navigation.NavHostController
 import com.nikola0055.kmp.navigation.Screen
 import com.nikola0055.kmp.shareData
 import kmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.text.all
 
@@ -70,7 +65,7 @@ fun MainScreen(
                     IconButton(onClick = { navController.navigate(Screen.About.route) }) {
                         Icon(
                             imageVector = Icons.Outlined.Info,
-                            contentDescription = stringResource(Res.string.tentang_aplikasi)
+                            contentDescription = stringResource(Res.string.tentang)
                         )
                     }
                 }
@@ -87,60 +82,48 @@ fun MainScreen(
 fun ScreenContent(
     modifier: Modifier = Modifier
 ) {
-    var berat by rememberSaveable { mutableStateOf("") }
-    var beratError by rememberSaveable { mutableStateOf(false) }
+    var panjang by rememberSaveable { mutableStateOf("") }
+    var panjangError by rememberSaveable { mutableStateOf(false) }
 
-    var tinggi by rememberSaveable { mutableStateOf("") }
-    var tinggiError by rememberSaveable { mutableStateOf(false) }
+    var lebar by rememberSaveable { mutableStateOf("") }
+    var lebarError by rememberSaveable { mutableStateOf(false) }
 
-    val radioOptions = listOf(
-        Res.string.pria,
-        Res.string.wanita
-    )
-    var gender by rememberSaveable { mutableIntStateOf(0) }
 
-    var bmi by rememberSaveable { mutableFloatStateOf(0f) }
-    val kategoriList = listOf(
-        Res.string.kurus,
-        Res.string.ideal,
-        Res.string.gemuk
-    )
-    var kategori by rememberSaveable { mutableIntStateOf(0) }
+    var luas by rememberSaveable { mutableFloatStateOf(0f) }
+    var keliling by rememberSaveable { mutableFloatStateOf(0f) }
 
 
     Column(
-        modifier = modifier.fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+        modifier = modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(Res.string.bmi_intro),
+            text = stringResource(Res.string.intro),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = berat,
-            onValueChange = { beratValue ->
-                if (beratValue.all { it.isDigit() || it == '.' } && beratValue != ".") {
-                    berat = beratValue
+            value = panjang,
+            onValueChange = { panjangValue ->
+                if (panjangValue.all { it.isDigit() || it == '.' } && panjangValue != ".") {
+                    panjang = panjangValue
                 }
             },
             label = {
-                Text(text = stringResource(Res.string.berat_badan))
+                Text(text = stringResource(Res.string.panjang))
             },
             trailingIcon = {
                 IconPicker(
-                    isError = beratError,
-                    unit = "kg"
+                    isError = panjangError,
+                    unit = "cm"
                 )
             },
-            isError = beratError,
+            isError = panjangError,
             supportingText = {
                 ErrorHint(
-                    isError = beratError
+                    isError = panjangError
                 )
             },
             singleLine = true,
@@ -151,25 +134,25 @@ fun ScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
-            value = tinggi,
-            onValueChange = { tinggiValue ->
-                if (tinggiValue.all { it.isDigit() || it == '.' } && tinggiValue != ".") {
-                    tinggi = tinggiValue
+            value = lebar,
+            onValueChange = { lebarValue ->
+                if (lebarValue.all { it.isDigit() || it == '.' } && lebarValue != ".") {
+                    lebar = lebarValue
                 }
             },
             label = {
-                Text(text = stringResource(Res.string.tinggi_badan))
+                Text(text = stringResource(Res.string.lebar))
             },
             trailingIcon = {
                 IconPicker(
-                    isError = tinggiError,
+                    isError = lebarError,
                     unit = "cm"
                 )
             },
-            isError = tinggiError,
+            isError = lebarError,
             supportingText = {
                 ErrorHint(
-                    isError = tinggiError
+                    isError = lebarError
                 )
             },
             singleLine = true,
@@ -179,48 +162,49 @@ fun ScreenContent(
             ),
             modifier = Modifier.fillMaxWidth()
         )
+
         Row(
-            modifier = Modifier
-                .padding(top = 6.dp)
-                .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            radioOptions.forEachIndexed { index, item ->
-                GenderOption(
-                    label = stringResource(radioOptions[index]),
-                    isSelected = item == radioOptions[gender],
-                    modifier = Modifier.weight(1f).padding(16.dp).selectable(
-                        selected = item == radioOptions[gender],
-                        onClick = { gender = index },
-                        role = Role.RadioButton
-                    )
-                )
+            Button(
+                onClick = {
+                    panjangError = panjang.isBlank() || panjang.toFloat() <= 0
+                    lebarError = lebar.isBlank() || lebar.toFloat() <= 0
+                    if (panjangError || lebarError) return@Button
+
+                    luas = luas(panjang.toFloat(), lebar.toFloat())
+                    keliling = keliling(panjang.toFloat(), lebar.toFloat())
+                },
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Text(text = stringResource(Res.string.hitung))
+            }
+
+            Spacer(Modifier.width(16.dp))
+
+            Button(
+                onClick = {
+                    panjang = ""
+                    lebar = ""
+                    panjangError = false
+                    lebarError = false
+                    luas = 0f
+                    keliling = 0f
+                },
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Text(text = stringResource(Res.string.reset))
             }
         }
 
-        Button(
-            onClick = {
-                beratError = berat.isBlank() || berat.toFloat() <= 0
-                tinggiError = tinggi.isBlank() || tinggi.toFloat() <= 0
-                if (beratError || tinggiError) return@Button
-
-
-                bmi = hitungBMI(berat.toFloat(), tinggi.toFloat())
-                kategori = getKategori(bmi, radioOptions[gender] == radioOptions[0])
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(4.dp),
-        ) {
-            Text(text = stringResource(Res.string.hitung))
-        }
-
-        if (bmi != 0f) {
+        if (luas != 0f) {
             val message = stringResource(
                 Res.string.bagikan_template,
-                berat,
-                tinggi,
-                gender,
-                ((bmi * 100).roundToInt() / 100f).toString(),
-                kategoriList[kategori]
+                panjang,
+                lebar,
+                ((luas * 100).roundToInt() / 100f).toString(),
+                ((keliling * 100).roundToInt() / 100f).toString()
             )
 
             HorizontalDivider(
@@ -228,12 +212,12 @@ fun ScreenContent(
                 thickness = 1.dp,
             )
             Text(
-                text = stringResource(Res.string.bmi_x, ((bmi * 100).roundToInt() / 100f).toString()),
+                text = stringResource(Res.string.luas_x, ((luas * 100).roundToInt() / 100f).toString()),
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = stringResource(kategoriList[kategori]),
-                style = MaterialTheme.typography.headlineLarge
+                text = stringResource(Res.string.keliling_x, ((keliling * 100).roundToInt() / 100f).toString()),
+                style = MaterialTheme.typography.titleLarge
             )
 
             Button(
@@ -247,46 +231,12 @@ fun ScreenContent(
     }
 }
 
-@Composable
-fun GenderOption(
-    label: String,
-    isSelected: Boolean,
-    modifier: Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            onClick = null
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-    }
+private fun luas(panjang: Float, lebar: Float): Float {
+    return panjang * lebar
 }
 
-private fun hitungBMI(berat: Float, tinggi: Float): Float {
-    return berat / ((tinggi / 100).pow(2))
-}
-
-private fun getKategori(bmi: Float, isMale: Boolean): Int {
-    return if (isMale) {
-        when {
-            bmi < 20.5 -> 0
-            bmi >= 27.0 -> 2
-            else -> 1
-        }
-    } else {
-        when {
-            bmi < 18.5 -> 0
-            bmi >= 25.0 -> 2
-            else -> 1
-        }
-    }
+private fun keliling(panjang: Float, lebar: Float): Float {
+    return 2 * (panjang + lebar)
 }
 
 @Composable

@@ -1,5 +1,6 @@
 package com.nikola0055.kmp.ui.screen
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -13,21 +14,22 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import kmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
-    navController: NavHostController
+    navController: NavController
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(Res.string.tentang_aplikasi))
+                    Text(text = stringResource(Res.string.tentang))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -37,8 +39,7 @@ fun AboutScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.kembali),
-                            tint = MaterialTheme.colorScheme.primary
+                            contentDescription = stringResource(Res.string.kembali)
                         )
                     }
                 }
@@ -46,8 +47,12 @@ fun AboutScreen(
         }
     ) { innerPadding ->
         Text(
-            text = stringResource(Res.string.copyright),
-            modifier = Modifier.padding(innerPadding).padding(16.dp)
+            text = stringResource(Res.string.tentang_teks),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(innerPadding)
+                .padding(16.dp)
+                .fillMaxWidth()
         )
     }
 }
