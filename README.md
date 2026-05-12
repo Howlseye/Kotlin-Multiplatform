@@ -3,8 +3,8 @@
 |-------|-----------------------------|---------------|
 | 2     | Build Your First App        | Selesai       |
 | 3     | Working with Images         | Selesai       |
-| 4     | Get User Input              | Belum Selesai |
-| 5     | App Navigation              | Belum Selesai |
+| 4     | Get User Input              | Selesai       |
+| 5     | App Navigation              | Selesai       |
 | 7     | Scrollable List             | Belum Selesai |
 | 8     | Navigate with Data          | Belum Selesai |
 | 9     | Room Database               | Belum Selesai |
