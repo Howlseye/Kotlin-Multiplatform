@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Mopro KMP</string>
-    <string name="count">Count +1</string>
+    <string name="list_kosong">Belum ada data</string>
 </resources>
