@@ -3,13 +3,18 @@ package com.nikola0055.kmp.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -31,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nikola0055.kmp.model.Catatan
 import kmp.composeapp.generated.resources.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -39,6 +45,8 @@ import org.jetbrains.compose.resources.stringResource
 fun MainScreen() {
     // Pengganti Toast
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val fabString = stringResource(Res.string.belum_bisa)
 
     Scaffold(
         topBar = {
@@ -58,19 +66,34 @@ fun MainScreen() {
                 hostState = snackbarHostState,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = fabString,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(Res.string.tambah_catatan),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     ) { innerPadding ->
-        ScreenContent(Modifier.padding(innerPadding), snackbarHostState)
+        ScreenContent(Modifier.padding(innerPadding), snackbarHostState, scope)
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState) {
+fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, scope: CoroutineScope) {
     val viewModel: MainViewModel = viewModel{ MainViewModel() }
     val data = viewModel.data
-
-    // Pengganti Toast
-    val scope = rememberCoroutineScope()
 
     if (data.isEmpty()) {
         Column(
@@ -83,7 +106,8 @@ fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
     }
     else {
         LazyColumn(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 84.dp)
         ) {
             items(data) {
                 val pesan = stringResource(Res.string.x_diklik, it.judul)
