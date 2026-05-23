@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Mopro KMP</string>
     <string name="list_kosong">Belum ada data</string>
+    <string name="x_diklik">%1$s diklik!</string>
 </resources>
