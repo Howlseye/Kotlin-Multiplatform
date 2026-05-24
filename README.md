@@ -5,8 +5,8 @@
 | 3     | Working with Images         | Selesai       |
 | 4     | Get User Input              | Selesai       |
 | 5     | App Navigation              | Selesai       |
-| 7     | Scrollable List             | Belum Selesai |
-| 8     | Navigate with Data          | Belum Selesai |
+| 7     | Scrollable List             | Selesai       |
+| 8     | Navigate with Data          | Selesai       |
 | 9     | Room Database               | Belum Selesai |
 | 10    | Data Persistence: DataStore | Belum Selesai |
 | 12    | Connect to the Internet     | Belum Selesai |
