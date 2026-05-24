@@ -17,16 +17,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -34,20 +29,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.nikola0055.kmp.model.Mahasiswa
+import com.nikola0055.kmp.navigation.Screen
 import kmp.composeapp.generated.resources.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    // Pengganti Toast
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val fabString = stringResource(Res.string.belum_bisa)
-
+fun MainScreen(navHostController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,22 +51,10 @@ fun MainScreen() {
                 )
             )
         },
-        // Pengganti Toast
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = fabString,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
+                    navHostController.navigate(Screen.FormBaru.route)
                 }
             ) {
                 Icon(
@@ -86,12 +65,12 @@ fun MainScreen() {
             }
         }
     ) { innerPadding ->
-        ScreenContent(Modifier.padding(innerPadding), snackbarHostState, scope)
+        ScreenContent(Modifier.padding(innerPadding), navHostController)
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, scope: CoroutineScope) {
+fun ScreenContent(modifier: Modifier = Modifier, navHostController: NavHostController) {
     val viewModel: MainViewModel = viewModel{ MainViewModel() }
     val data = viewModel.data
 
@@ -110,15 +89,8 @@ fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
             contentPadding = PaddingValues(bottom = 84.dp)
         ) {
             items(data) {
-                val pesan = stringResource(Res.string.x_diklik, it.nama)
                 ListItem(mahasiswa = it) {
-                    // Pengganti Toast
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = pesan,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
+                    navHostController.navigate(Screen.FormUbah.withId(it.id))
                 }
                 HorizontalDivider()
             }
@@ -153,7 +125,7 @@ fun ListItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
 @Composable
 fun MainScreenPreviewLight() {
     MaterialTheme {
-        MainScreen()
+        MainScreen(rememberNavController())
     }
 }
 
@@ -161,6 +133,6 @@ fun MainScreenPreviewLight() {
 @Composable
 fun MainScreenPreviewDark() {
     MaterialTheme(colorScheme = darkColorScheme()) {
-        MainScreen()
+        MainScreen(rememberNavController())
     }
 }

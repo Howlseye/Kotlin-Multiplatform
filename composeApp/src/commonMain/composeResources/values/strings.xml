@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Mopro KMP</string>
     <string name="list_kosong">Belum ada data</string>
-    <string name="x_diklik">%1$s diklik!</string>
     <string name="tambah_mahasiswa">Tambah mahasiswa</string>
-    <string name="belum_bisa">Belum bisa tambah mahasiswa</string>
+    <string name="nama">Nama</string>
+    <string name="nim">NIM</string>
+    <string name="kelas">Kelas</string>
+    <string name="detail_mahasiswa">Detail mahasiswa</string>
+    <string name="kembali">Kembali</string>
+    <string name="simpan">Simpan</string>
+    <string name="edit_mahasiswa">Edit mahasiswa</string>
 </resources>
