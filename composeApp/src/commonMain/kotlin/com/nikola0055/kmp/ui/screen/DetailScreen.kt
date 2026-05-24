@@ -36,7 +36,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(navController: NavHostController) {
+fun DetailScreen(navController: NavHostController, id: Long? = null) {
     var judul by remember { mutableStateOf("") }
     var catatan by remember { mutableStateOf("") }
 
@@ -53,7 +53,10 @@ fun DetailScreen(navController: NavHostController) {
                     }
                 },
                 title = {
-                    Text(text = stringResource(Res.string.tambah_catatan))
+                    if (id == null)
+                        Text(text = stringResource(Res.string.tambah_catatan))
+                    else
+                        Text(text = stringResource(Res.string.edit_catatan))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,

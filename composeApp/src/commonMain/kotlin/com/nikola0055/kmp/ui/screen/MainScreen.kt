@@ -17,16 +17,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -39,17 +34,11 @@ import androidx.navigation.compose.rememberNavController
 import com.nikola0055.kmp.model.Catatan
 import com.nikola0055.kmp.navigation.Screen
 import kmp.composeapp.generated.resources.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
-    // Pengganti Toast
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,13 +49,6 @@ fun MainScreen(navController: NavHostController) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 )
-            )
-        },
-        // Pengganti Toast
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.padding(bottom = 16.dp)
             )
         },
         floatingActionButton = {
@@ -83,12 +65,12 @@ fun MainScreen(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        ScreenContent(Modifier.padding(innerPadding), snackbarHostState, scope)
+        ScreenContent(Modifier.padding(innerPadding), navController)
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, scope: CoroutineScope) {
+fun ScreenContent(modifier: Modifier = Modifier, navController: NavHostController) {
     val viewModel: MainViewModel = viewModel{ MainViewModel() }
     val data = viewModel.data
 
@@ -107,15 +89,8 @@ fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
             contentPadding = PaddingValues(bottom = 84.dp)
         ) {
             items(data) {
-                val pesan = stringResource(Res.string.x_diklik, it.judul)
                 ListItem(catatan = it) {
-                    // Pengganti Toast
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = pesan,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
+                    navController.navigate(Screen.FormUbah.withId(it.id))
                 }
                 HorizontalDivider()
             }
