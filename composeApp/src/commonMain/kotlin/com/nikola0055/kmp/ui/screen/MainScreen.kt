@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.nikola0055.kmp.model.Catatan
+import com.nikola0055.kmp.model.Mahasiswa
 import kmp.composeapp.generated.resources.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -80,7 +80,7 @@ fun MainScreen() {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(Res.string.tambah_catatan),
+                    contentDescription = stringResource(Res.string.tambah_mahasiswa),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -110,8 +110,8 @@ fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
             contentPadding = PaddingValues(bottom = 84.dp)
         ) {
             items(data) {
-                val pesan = stringResource(Res.string.x_diklik, it.judul)
-                ListItem(catatan = it) {
+                val pesan = stringResource(Res.string.x_diklik, it.nama)
+                ListItem(mahasiswa = it) {
                     // Pengganti Toast
                     scope.launch {
                         snackbarHostState.showSnackbar(
@@ -127,7 +127,7 @@ fun ScreenContent(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
 }
 
 @Composable
-fun ListItem(catatan: Catatan, onClick: () -> Unit) {
+fun ListItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth()
             .clickable { onClick() }
@@ -135,17 +135,17 @@ fun ListItem(catatan: Catatan, onClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = catatan.judul,
-            maxLines = 1,
+            text = mahasiswa.nama,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold
         )
+        Text(mahasiswa.nim.toString())
         Text(
-            text = catatan.catatan,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            text = mahasiswa.kelas,
+            fontSize = MaterialTheme.typography.bodySmall.fontSize,
+            fontWeight = FontWeight.SemiBold
         )
-        Text(text = catatan.tanggal)
     }
 }
 
