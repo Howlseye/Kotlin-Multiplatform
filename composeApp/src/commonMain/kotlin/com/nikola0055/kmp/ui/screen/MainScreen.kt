@@ -34,7 +34,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.nikola0055.kmp.model.Catatan
+import com.nikola0055.kmp.navigation.Screen
 import kmp.composeapp.generated.resources.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -42,11 +45,10 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavHostController) {
     // Pengganti Toast
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val fabString = stringResource(Res.string.belum_bisa)
 
     Scaffold(
         topBar = {
@@ -70,12 +72,7 @@ fun MainScreen() {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = fabString,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
+                    navController.navigate(Screen.FormBaru.route)
                 }
             ) {
                 Icon(
@@ -153,7 +150,7 @@ fun ListItem(catatan: Catatan, onClick: () -> Unit) {
 @Composable
 fun MainScreenPreviewLight() {
     MaterialTheme {
-        MainScreen()
+        MainScreen(rememberNavController())
     }
 }
 
@@ -161,6 +158,6 @@ fun MainScreenPreviewLight() {
 @Composable
 fun MainScreenPreviewDark() {
     MaterialTheme(colorScheme = darkColorScheme()) {
-        MainScreen()
+        MainScreen(rememberNavController())
     }
 }
