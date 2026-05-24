@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kmp.composeapp.generated.resources.*
@@ -37,8 +39,17 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(navController: NavHostController, id: Long? = null) {
+    val viewModel: MainViewModel = viewModel{ MainViewModel() }
+
     var judul by remember { mutableStateOf("") }
     var catatan by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        if (id == null) return@LaunchedEffect
+        val data = viewModel.getCatatan(id) ?: return@LaunchedEffect
+        judul = data.judul
+        catatan = data.catatan
+    }
 
     Scaffold(
         topBar = {
