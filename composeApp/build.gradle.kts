@@ -46,6 +46,9 @@ kotlin {
             // Modul 4
             implementation(libs.compose.material)
             implementation(libs.compose.icons.extended)
+
+            // Modul 5
+            implementation(libs.navigation.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
