@@ -5,8 +5,10 @@
     <string name="nama">Nama</string>
     <string name="nim">NIM</string>
     <string name="kelas">Kelas</string>
-    <string name="detail_mahasiswa">Detail mahasiswa</string>
     <string name="kembali">Kembali</string>
     <string name="simpan">Simpan</string>
-    <string name="edit_mahasiswa">Edit mahasiswa</string>
+    <string name="edit_mahasiswa">Ubah mahasiswa</string>
+    <string name="invalid">Nama dan NIM mahasiswa tidak boleh kosong.</string>
+    <string name="lainnya">Opsi lainnya</string>
+    <string name="hapus">Hapus mahasiswa</string>
 </resources>

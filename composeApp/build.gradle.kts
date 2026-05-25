@@ -7,6 +7,15 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+
+    // Modul 9
+    alias(libs.plugins.devtools.ksp)
+    id("androidx.room") version "2.8.4"
+}
+
+// Modul 9
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
@@ -47,8 +56,13 @@ kotlin {
             implementation(libs.compose.material)
             implementation(libs.compose.icons.extended)
 
-            //Modul 5
+            // Modul 5
             implementation(libs.navigation.compose)
+
+            // Modul 9
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -89,6 +103,13 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+
+    // Modul 9
+    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
 }
 
 compose.desktop {

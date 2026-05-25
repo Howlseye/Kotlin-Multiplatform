@@ -11,7 +11,10 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,6 +22,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +47,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.nikola0055.kmp.database.MahasiswaDb
+import com.nikola0055.kmp.getDatabaseBuilder
 import kmp.composeapp.generated.resources.*
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +59,14 @@ fun DetailScreen(
     navController: NavHostController,
     id: Long? = null
 ) {
-    val viewModel: MainViewModel = viewModel{ MainViewModel() }
+    val builder = getDatabaseBuilder()
+    val database = MahasiswaDb.getInstance(builder)
+    val dao = database.mahasiswaDao
+    val viewModel: DetailViewModel = viewModel{ DetailViewModel(dao) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val invalidString = stringResource(Res.string.invalid)
 
     var nama by remember { mutableStateOf("") }
     var nim by remember { mutableLongStateOf(0) }
@@ -59,7 +76,7 @@ fun DetailScreen(
         "D3IF-03-48",
         "D3IF-04-48"
     )
-    var kelas by remember { mutableStateOf("") }
+    var kelas by remember { mutableStateOf(kelasOptions[0]) }
 
     LaunchedEffect(Unit) {
         if (id == null) return@LaunchedEffect
@@ -92,14 +109,43 @@ fun DetailScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 actions = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        if (nama == "" || nim == 0L) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = invalidString,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                            return@IconButton
+                        }
+
+                        if (id == null) {
+                            viewModel.insert(nama, nim, kelas)
+                        } else {
+                            viewModel.update(id, nama, nim, kelas)
+                        }
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
                             contentDescription = stringResource(Res.string.simpan),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
+                    if (id != null) {
+                        DeleteAction {
+                            viewModel.delete(id)
+                            navController.popBackStack()
+                        }
+                    }
                 }
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
         }
     ) { innerPadding ->
@@ -107,7 +153,7 @@ fun DetailScreen(
             nim = nim,
             onTitleChange = { nama = it },
             nama = nama,
-            onDescChange = { },
+            onDescChange = { nim = it.toLongOrNull() ?: 0 },
             kelasOptions = kelasOptions,
             kelas = kelas,
             onKelasChange = { kelas = it },
@@ -176,6 +222,33 @@ fun FormMahasiswa(
                     Text(text = option)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun DeleteAction(delete: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    IconButton(onClick = { expanded = true }) {
+        Icon(
+            imageVector = Icons.Filled.MoreVert,
+            contentDescription = stringResource(Res.string.lainnya),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(text = stringResource(Res.string.hapus))
+                },
+                onClick = {
+                    expanded = false
+                    delete()
+                }
+            )
         }
     }
 }

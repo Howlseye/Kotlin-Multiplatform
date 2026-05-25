@@ -22,15 +22,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.nikola0055.kmp.database.MahasiswaDb
+import com.nikola0055.kmp.getDatabaseBuilder
 import com.nikola0055.kmp.model.Mahasiswa
 import com.nikola0055.kmp.navigation.Screen
 import kmp.composeapp.generated.resources.*
@@ -71,8 +75,11 @@ fun MainScreen(navHostController: NavHostController) {
 
 @Composable
 fun ScreenContent(modifier: Modifier = Modifier, navHostController: NavHostController) {
-    val viewModel: MainViewModel = viewModel{ MainViewModel() }
-    val data = viewModel.data
+    val builder = getDatabaseBuilder()
+    val database = MahasiswaDb.getInstance(builder)
+    val dao = database.mahasiswaDao
+    val viewModel: MainViewModel = viewModel{ MainViewModel(dao) }
+    val data by viewModel.data.collectAsStateWithLifecycle()
 
     if (data.isEmpty()) {
         Column(
