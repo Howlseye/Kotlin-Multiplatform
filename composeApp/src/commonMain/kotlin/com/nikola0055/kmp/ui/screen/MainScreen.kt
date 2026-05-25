@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.nikola0055.kmp.navigation.Screen
+import com.nikola0055.kmp.shareData
 import kmp.composeapp.generated.resources.*
 import kmp.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
@@ -191,6 +192,15 @@ fun ScreenContent(modifier: Modifier = Modifier) {
         }
 
         if (bmi != 0f) {
+            val message = stringResource(
+                Res.string.bagikan_template,
+                berat,
+                tinggi,
+                gender,
+                ((bmi * 100).roundToInt() / 100f).toString(),
+                stringResource(kategoriList[kategori])
+            )
+
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 thickness = 1.dp
@@ -203,6 +213,13 @@ fun ScreenContent(modifier: Modifier = Modifier) {
                 text = stringResource(kategoriList[kategori]).uppercase(),
                 style = MaterialTheme.typography.headlineLarge
             )
+            Button(
+                onClick = { shareData(message) },
+                modifier = Modifier.padding(top = 8.dp),
+                contentPadding = PaddingValues(32.dp, 16.dp),
+            ) {
+                Text(text = stringResource(Res.string.bagikan))
+            }
         }
     }
 }
