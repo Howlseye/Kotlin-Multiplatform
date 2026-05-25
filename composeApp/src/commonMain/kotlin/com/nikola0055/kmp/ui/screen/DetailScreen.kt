@@ -61,6 +61,8 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
     var judul by remember { mutableStateOf("") }
     var catatan by remember { mutableStateOf("") }
 
+    var showDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         if (id == null) return@LaunchedEffect
         val data = viewModel.getCatatan(id) ?: return@LaunchedEffect
@@ -117,8 +119,7 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                     }
                     if (id != null) {
                         DeleteAction {
-                            viewModel.delete(id)
-                            navController.popBackStack()
+                            showDialog = true
                         }
                     }
                 }
@@ -138,6 +139,15 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
             onDescChange = { catatan = it },
             modifier = Modifier.padding(padding)
         )
+
+        if (id != null && showDialog) {
+            DisplayAlertDialog(
+                onDismissRequest = { showDialog = false }) {
+                showDialog = false
+                viewModel.delete(id)
+                navController.popBackStack()
+            }
+        }
     }
 }
 
