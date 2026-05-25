@@ -33,13 +33,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.nikola0055.kmp.database.CatatanDb
+import com.nikola0055.kmp.getDatabaseBuilder
 import kmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(navController: NavHostController, id: Long? = null) {
-    val viewModel: MainViewModel = viewModel{ MainViewModel() }
+    val builder = getDatabaseBuilder()
+    val database = CatatanDb.getInstance(builder)
+    val dao = database.catatanDao
+    val viewModel: MainViewModel = viewModel{ MainViewModel(dao) }
 
     var judul by remember { mutableStateOf("") }
     var catatan by remember { mutableStateOf("") }
