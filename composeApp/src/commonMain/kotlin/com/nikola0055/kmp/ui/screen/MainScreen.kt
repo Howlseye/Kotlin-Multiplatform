@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -25,6 +26,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import kmp.composeapp.generated.resources.*
 import kmp.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,6 +75,15 @@ fun ScreenContent(modifier: Modifier = Modifier) {
         stringResource(Res.string.wanita)
     )
     var gender by remember { mutableStateOf(radioOptions[0]) }
+
+    var bmi by remember { mutableFloatStateOf(0f) }
+    val kategoriList = listOf(
+        Res.string.kurus,
+        Res.string.ideal,
+        Res.string.gemuk
+    )
+    var kategori by remember { mutableIntStateOf(0) }
+
     Column(
         modifier = modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
@@ -136,11 +150,29 @@ fun ScreenContent(modifier: Modifier = Modifier) {
             }
         }
         Button(
-            onClick = {},
+            onClick = {
+                bmi = hitungBmi(berat.toFloat(), tinggi.toFloat())
+                kategori = getKategori(bmi, gender == radioOptions[0])
+            },
             modifier = Modifier.padding(top = 8.dp),
             contentPadding = PaddingValues(horizontal=32.dp, vertical=16.dp)
         ) {
             Text(text = stringResource(Res.string.hitung))
+        }
+
+        if (bmi != 0f) {
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = 1.dp
+            )
+            Text(
+                text = stringResource(Res.string.bmi_x, ((bmi * 100).roundToInt() / 100f).toString()),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = stringResource(kategoriList[kategori]).uppercase(),
+                style = MaterialTheme.typography.headlineLarge
+            )
         }
     }
 }
@@ -157,6 +189,26 @@ fun GenderOption(label: String, isSelected: Boolean, modifier: Modifier) {
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 8.dp)
         )
+    }
+}
+
+private fun hitungBmi(berat: Float, tinggi: Float): Float {
+    return berat / (tinggi / 100).pow(2)
+}
+
+private fun getKategori(bmi: Float, isMale: Boolean): Int {
+    return if (isMale) {
+        when {
+            bmi < 20.5 -> 0
+            bmi >= 27.0 -> 2
+            else -> 1
+        }
+    } else {
+        when {
+            bmi < 18.5 -> 0
+            bmi >= 25.0 -> 2
+            else -> 1
+        }
     }
 }
 
