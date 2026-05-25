@@ -3,9 +3,13 @@ package com.nikola0055.kmp
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.nikola0055.kmp.database.CatatanDb
+import platform.Foundation.NSDate
+import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSLocale
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
+import platform.Foundation.localeWithLocaleIdentifier
 import platform.UIKit.UIDevice
 
 class IOSPlatform: Platform {
@@ -26,4 +30,12 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<CatatanDb> {
     return Room.databaseBuilder<CatatanDb>(
         name = dbFilePath
     )
+}
+
+actual fun formatDateTime(): String {
+    val formatter = NSDateFormatter().apply {
+        dateFormat = "yyyy-MM-dd HH:mm:ss"
+        locale = NSLocale.localeWithLocaleIdentifier("en_US")
+    }
+    return formatter.stringFromDate(NSDate())
 }

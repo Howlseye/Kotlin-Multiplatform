@@ -15,6 +15,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -36,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.nikola0055.kmp.database.CatatanDb
 import com.nikola0055.kmp.getDatabaseBuilder
 import kmp.composeapp.generated.resources.*
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +49,11 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
     val builder = getDatabaseBuilder()
     val database = CatatanDb.getInstance(builder)
     val dao = database.catatanDao
-    val viewModel: MainViewModel = viewModel{ MainViewModel(dao) }
+    val viewModel: DetailViewModel = viewModel{ DetailViewModel(dao) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val invalidString = stringResource(Res.string.invalid)
 
     var judul by remember { mutableStateOf("") }
     var catatan by remember { mutableStateOf("") }
@@ -79,7 +88,22 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 actions = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        if (judul == "" || catatan == "") {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = invalidString,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                            return@IconButton
+                        }
+
+                        if (id == null) {
+                            viewModel.insert(judul, catatan)
+                        }
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
                             contentDescription = stringResource(Res.string.simpan),
@@ -87,6 +111,12 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                         )
                     }
                 }
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
         }
     ) { padding ->
