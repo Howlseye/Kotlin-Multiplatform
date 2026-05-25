@@ -4,9 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -49,6 +52,8 @@ fun MainScreen() {
         Hewan("Sapi", Res.drawable.sapi),
     )
 
+    var index by remember { mutableIntStateOf(0) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -62,12 +67,18 @@ fun MainScreen() {
             )
         }
     ) { innerPadding ->
-        ScreenContent(data[0], Modifier.padding(innerPadding))
+        ScreenContent(data[index], Modifier.padding(innerPadding)) {
+            index++
+        }
     }
 }
 
 @Composable
-fun ScreenContent(hewan: Hewan, modifier: Modifier = Modifier) {
+fun ScreenContent(
+    hewan: Hewan,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -84,6 +95,13 @@ fun ScreenContent(hewan: Hewan, modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(top = 16.dp)
         )
+        Button(
+            onClick = { onClick() },
+            modifier = Modifier.fillMaxWidth(0.5f).padding(top = 24.dp),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            Text(text = stringResource(Res.string.lanjut))
+        }
     }
 }
 
