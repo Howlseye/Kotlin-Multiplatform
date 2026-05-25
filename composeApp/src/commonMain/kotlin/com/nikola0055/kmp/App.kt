@@ -68,7 +68,7 @@ fun MainScreen() {
         }
     ) { innerPadding ->
         ScreenContent(data[index], Modifier.padding(innerPadding)) {
-            index++
+            index = if (index == data.size-1) 0 else index + 1
         }
     }
 }
