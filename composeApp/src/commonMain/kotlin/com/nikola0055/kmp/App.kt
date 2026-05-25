@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,53 +26,69 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun App() {
     val darkTheme = isSystemInDarkTheme()
 
     MaterialTheme(
         colorScheme = if (darkTheme) darkColorScheme() else lightColorScheme()
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(stringResource(Res.string.app_name))
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-            }
-        ) { innerPadding ->
-            ScreenContent(Modifier.padding(innerPadding))
-        }
+        MainScreen()
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenContent(
-    modifier: Modifier = Modifier
-) {
-    var number by remember { mutableIntStateOf(0) }
+fun MainScreen() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(Res.string.app_name))
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                )
+            )
+        }
+    ) { innerPadding ->
+        ScreenContent(Modifier.padding(innerPadding))
+    }
+}
 
+@Composable
+fun ScreenContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = number.toString(),
-            style = MaterialTheme.typography.displayLarge,
+            text = "0",
+            style = MaterialTheme.typography.displayLarge
         )
         Button(
-            onClick = { number++ },
+            onClick = {},
             modifier = Modifier.fillMaxWidth(0.5f).padding(top = 16.dp),
             contentPadding = PaddingValues(16.dp)
         ) {
-            Text(stringResource(Res.string.count))
+            Text(text = stringResource(Res.string.count))
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreviewLight() {
+    MaterialTheme {
+        MainScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreviewDark() {
+    MaterialTheme(colorScheme = darkColorScheme()) {
+        MainScreen()
     }
 }
