@@ -13,6 +13,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.nikola0055.kmp.model.Hewan
 import kmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
@@ -31,6 +32,14 @@ fun App() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+    val data = listOf(
+        Hewan("Ayam", Res.drawable.ayam),
+        Hewan("Bebek", Res.drawable.bebek),
+        Hewan("Domba", Res.drawable.domba),
+        Hewan("Kambing", Res.drawable.kambing),
+        Hewan("Sapi", Res.drawable.sapi),
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
