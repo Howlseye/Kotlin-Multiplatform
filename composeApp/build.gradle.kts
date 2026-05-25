@@ -42,6 +42,10 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            // Modul 4
+            implementation(libs.compose.material)
+            implementation(libs.compose.icons.extended)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

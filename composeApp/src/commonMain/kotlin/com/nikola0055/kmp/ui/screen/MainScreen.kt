@@ -13,9 +13,12 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -68,7 +71,10 @@ fun MainScreen() {
 @Composable
 fun ScreenContent(modifier: Modifier = Modifier) {
     var berat by remember { mutableStateOf("") }
+    var beratError by remember { mutableStateOf(false) }
+
     var tinggi by remember { mutableStateOf("") }
+    var tinggiError by remember { mutableStateOf(false) }
 
     val radioOptions = listOf(
         stringResource(Res.string.pria),
@@ -105,7 +111,9 @@ fun ScreenContent(modifier: Modifier = Modifier) {
                 }
             },
             label = { Text(text = stringResource(Res.string.berat_badan)) },
-            trailingIcon = { Text(text = "kg") },
+            trailingIcon = { IconPicker(beratError, "kg") },
+            supportingText = { ErrorHint(beratError) },
+            isError = beratError,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -121,7 +129,9 @@ fun ScreenContent(modifier: Modifier = Modifier) {
                 }
             },
             label = { Text(text = stringResource(Res.string.tinggi_badan)) },
-            trailingIcon = { Text(text = "cm") },
+            trailingIcon = { IconPicker(tinggiError, "cm") },
+            supportingText = { ErrorHint(tinggiError) },
+            isError = tinggiError,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -151,6 +161,10 @@ fun ScreenContent(modifier: Modifier = Modifier) {
         }
         Button(
             onClick = {
+                beratError = (berat == "" || berat == "0")
+                tinggiError = (tinggi == "" || tinggi == "0")
+                if (beratError || tinggiError) return@Button
+
                 bmi = hitungBmi(berat.toFloat(), tinggi.toFloat())
                 kategori = getKategori(bmi, gender == radioOptions[0])
             },
@@ -189,6 +203,22 @@ fun GenderOption(label: String, isSelected: Boolean, modifier: Modifier) {
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 8.dp)
         )
+    }
+}
+
+@Composable
+fun IconPicker(isError: Boolean, unit: String) {
+    if (isError) {
+        Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
+    } else {
+        Text(text = unit)
+    }
+}
+
+@Composable
+fun ErrorHint(isError: Boolean) {
+    if (isError) {
+        Text(text = stringResource(Res.string.input_invalid))
     }
 }
 
