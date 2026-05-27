@@ -26,6 +26,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,9 +46,12 @@ import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import com.mmk.kmpauth.google.GoogleButtonUiContainer
 import com.nikola0055.kmp.BuildKonfig
+import com.nikola0055.kmp.createDataStore
 import com.nikola0055.kmp.model.Hewan
+import com.nikola0055.kmp.model.User
 import com.nikola0055.kmp.network.ApiStatus
 import com.nikola0055.kmp.network.HewanApi
+import com.nikola0055.kmp.network.UserDataStore
 import kmp.composeapp.generated.resources.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -56,6 +60,8 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+    val dataStore = remember { UserDataStore(createDataStore()) }
+    val user by dataStore.userFlow.collectAsState(User())
     val scope = rememberCoroutineScope()
 
     GoogleAuthProvider.create(
@@ -76,7 +82,15 @@ fun MainScreen() {
                     GoogleButtonUiContainer(
                         onGoogleSignInResult = { googleUser ->
                             if (googleUser != null) {
-                                println("Username: ${googleUser.displayName}\nEmail: ${googleUser.email}")
+                                scope.launch {
+                                    dataStore.saveData(
+                                        User(
+                                            name = googleUser.displayName,
+                                            email = googleUser.email!!,
+                                            photoUrl = googleUser.profilePicUrl!!
+                                        )
+                                    )
+                                }
                             } else {
                                 println("Authentication failed or was canceled.")
                             }
@@ -85,7 +99,11 @@ fun MainScreen() {
                         IconButton(
                             onClick = {
                                 scope.launch {
-                                    this@GoogleButtonUiContainer.onClick()
+                                    if (user.email.isNotEmpty()) {
+                                        println("SIGN-IN\nUser: $user")
+                                    } else {
+                                        this@GoogleButtonUiContainer.onClick()
+                                    }
                                 }
                             }
                         ) {

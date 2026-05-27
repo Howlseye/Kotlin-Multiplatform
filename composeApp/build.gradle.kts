@@ -63,6 +63,8 @@ kotlin {
 
             // Modul 14
             implementation(libs.kmpAuth.google)
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.androidx.datastore.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
