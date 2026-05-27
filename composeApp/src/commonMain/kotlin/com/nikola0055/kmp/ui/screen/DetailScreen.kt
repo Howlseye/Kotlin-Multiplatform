@@ -78,6 +78,8 @@ fun DetailScreen(
     )
     var kelas by remember { mutableStateOf(kelasOptions[0]) }
 
+    var showDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         if (id == null) return@LaunchedEffect
         val data = viewModel.getMahasiswa(id) ?: return@LaunchedEffect
@@ -135,8 +137,7 @@ fun DetailScreen(
                     }
                     if (id != null) {
                         DeleteAction {
-                            viewModel.delete(id)
-                            navController.popBackStack()
+                            showDialog = true
                         }
                     }
                 }
@@ -151,23 +152,32 @@ fun DetailScreen(
     ) { innerPadding ->
         FormMahasiswa(
             nim = nim,
-            onTitleChange = { nama = it },
+            onNamaChange = { nama = it },
             nama = nama,
-            onDescChange = { nim = it.toLongOrNull() ?: 0 },
+            onNimChange = { nim = it.toLongOrNull() ?: 0 },
             kelasOptions = kelasOptions,
             kelas = kelas,
             onKelasChange = { kelas = it },
             modifier = Modifier.padding(innerPadding)
         )
+
+        if (id != null && showDialog) {
+            DisplayAlertDialog(
+                onDismissRequest = { showDialog = false }) {
+                showDialog = false
+                viewModel.delete(id)
+                navController.popBackStack()
+            }
+        }
     }
 }
 
 @Composable
 fun FormMahasiswa(
     nim: Long?,
-    onTitleChange: (String) -> Unit,
+    onNamaChange: (String) -> Unit,
     nama: String,
-    onDescChange: (String) -> Unit,
+    onNimChange: (String) -> Unit,
     kelasOptions: List<String>,
     kelas: String,
     onKelasChange: (String) -> Unit,
@@ -179,7 +189,7 @@ fun FormMahasiswa(
     ) {
         OutlinedTextField(
             value = nama,
-            onValueChange = onTitleChange,
+            onValueChange = onNamaChange,
             label = { Text(text = stringResource(Res.string.nama)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -191,7 +201,7 @@ fun FormMahasiswa(
 
         OutlinedTextField(
             value = if (nim == 0L) "" else nim.toString(),
-            onValueChange = onDescChange,
+            onValueChange = onNimChange,
             label = { Text(text = stringResource(Res.string.nim)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
