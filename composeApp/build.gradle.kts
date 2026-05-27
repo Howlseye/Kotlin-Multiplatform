@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -63,6 +64,9 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
 
+            // Modul 10
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.androidx.datastore.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

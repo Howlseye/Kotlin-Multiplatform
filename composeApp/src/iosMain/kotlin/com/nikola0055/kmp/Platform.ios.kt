@@ -1,8 +1,12 @@
 package com.nikola0055.kmp
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.nikola0055.kmp.database.CatatanDb
+import okio.Path.Companion.toPath
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSDocumentDirectory
@@ -38,4 +42,19 @@ actual fun formatDateTime(): String {
         locale = NSLocale.localeWithLocaleIdentifier("en_US")
     }
     return formatter.stringFromDate(NSDate())
+}
+
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+actual fun createDataStore(): DataStore<Preferences> {
+    return PreferenceDataStoreFactory.createWithPath(
+        produceFile = {
+            val documentDirectory = NSSearchPathForDirectoriesInDomains(
+                NSDocumentDirectory,
+                NSUserDomainMask,
+                true
+            ).first() as String
+
+            "$documentDirectory/$DATASTORE_FILE_NAME".toPath()
+        }
+    )
 }

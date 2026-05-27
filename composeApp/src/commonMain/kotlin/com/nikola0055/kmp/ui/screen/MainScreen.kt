@@ -30,10 +30,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -44,18 +44,26 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.nikola0055.kmp.createDataStore
 import com.nikola0055.kmp.database.CatatanDb
 import com.nikola0055.kmp.getDatabaseBuilder
 import com.nikola0055.kmp.model.Catatan
 import com.nikola0055.kmp.navigation.Screen
+import com.nikola0055.kmp.util.SettingsDataStore
 import kmp.composeapp.generated.resources.*
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
-    var showList by remember { mutableStateOf(true) }
+    val settingsRepository = remember {
+        SettingsDataStore.getInstance(produceDataStore = { createDataStore() })
+    }
+    val scope = rememberCoroutineScope()
+
+    val showList by settingsRepository.layoutFlow.collectAsState(initial = true)
 
     Scaffold(
         topBar = {
@@ -68,7 +76,11 @@ fun MainScreen(navController: NavHostController) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 actions = {
-                    IconButton(onClick = { showList = !showList }) {
+                    IconButton(onClick = {
+                        scope.launch {
+                            settingsRepository.saveLayout(isList = !showList)
+                        }
+                    }) {
                         Icon(
                             painter = painterResource(
                                 if (showList) Res.drawable.grid_view
