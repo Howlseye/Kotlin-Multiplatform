@@ -11,6 +11,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kmp.composeapp.generated.resources.Res
 import kmp.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
@@ -39,6 +40,8 @@ fun MainScreen() {
 fun ScreenContent(
     modifier: Modifier
 ) {
+    val viewModel: MainViewModel = viewModel{ MainViewModel() }
+
     Text(
         text = "Hello Android!",
         modifier = modifier
