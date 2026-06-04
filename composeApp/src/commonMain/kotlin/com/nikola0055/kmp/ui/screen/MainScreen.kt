@@ -33,8 +33,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.nikola0055.kmp.model.Hewan
-import com.nikola0055.kmp.network.HewanApi
+import com.nikola0055.kmp.model.Agent
 import kmp.composeapp.generated.resources.Res
 import kmp.composeapp.generated.resources.app_name
 import kmp.composeapp.generated.resources.gambar
@@ -71,22 +70,22 @@ fun ScreenContent(
         modifier = modifier.fillMaxSize().padding(4.dp),
         columns = GridCells.Fixed(2),
     ) {
-        items(data) { ListItem(hewan = it) }
+        items(data) { ListItem(agent = it) }
     }
 }
 
 @Composable
-fun ListItem(hewan: Hewan) {
+fun ListItem(agent: Agent) {
     Box(
         modifier = Modifier.padding(4.dp).border(1.dp, Color.Gray),
         contentAlignment = Alignment.BottomCenter
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data(HewanApi.getHewanUrl(hewan.imageId))
+                .data(agent.img)
                 .crossfade(true)
                 .build(),
-            contentDescription = stringResource(Res.string.gambar, hewan.nama),
+            contentDescription = stringResource(Res.string.gambar, agent.name),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         )
@@ -96,12 +95,12 @@ fun ListItem(hewan: Hewan) {
                 .padding(4.dp)
         ) {
             Text(
-                text = hewan.nama,
+                text = agent.name,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = hewan.namaLatin,
+                text = agent.ultimate,
                 fontStyle = FontStyle.Italic,
                 fontSize = 14.sp,
                 color = Color.White

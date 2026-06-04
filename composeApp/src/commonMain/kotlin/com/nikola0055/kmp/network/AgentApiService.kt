@@ -1,6 +1,6 @@
 package com.nikola0055.kmp.network
 
-import com.nikola0055.kmp.model.Hewan
+import com.nikola0055.kmp.model.Agent
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.http.GET
 import io.ktor.client.HttpClient
@@ -9,7 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.json.Json
 
-private const val BASE_URL = "https://raw.githubusercontent.com/" + "indraazimi/mobpro1-compose/static-api/"
+private const val BASE_URL = "https://www.jsonkeeper.com/b/"
 
 private val ktorfit = Ktorfit.Builder()
     .baseUrl(BASE_URL)
@@ -22,17 +22,13 @@ private val ktorfit = Ktorfit.Builder()
     )
     .build()
 
-interface HewanApiService {
-    @GET("static-api.json")
-    suspend fun getHewan(): List<Hewan>
+interface AgentApiService {
+    @GET("VTGT3")
+    suspend fun getAgent(): List<Agent>
 }
 
-object HewanApi {
-    val service: HewanApiService by lazy {
-        ktorfit.createHewanApiService()
-    }
-
-    fun getHewanUrl(imageId: String): String {
-        return "${BASE_URL}$imageId.jpg"
+object AgentApi {
+    val service: AgentApiService by lazy {
+        ktorfit.createAgentApiService()
     }
 }
