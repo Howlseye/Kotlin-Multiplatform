@@ -32,3 +32,5 @@ object AgentApi {
         ktorfit.createAgentApiService()
     }
 }
+
+enum class ApiStatus { LOADING, SUCCESS, FAILED }
