@@ -31,4 +31,8 @@ object HewanApi {
     val service: HewanApiService by lazy {
         ktorfit.createHewanApiService()
     }
+
+    fun getHewanUrl(imageId: String): String {
+        return "${BASE_URL}$imageId.jpg"
+    }
 }

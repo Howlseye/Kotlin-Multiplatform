@@ -52,6 +52,8 @@ kotlin {
             implementation(libs.ktorfit.lib)
             implementation(libs.ktor.contentNegotiation)
             implementation(libs.ktor.serialization.json)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
