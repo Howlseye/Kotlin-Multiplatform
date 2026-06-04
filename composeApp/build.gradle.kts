@@ -11,6 +11,7 @@ plugins {
     // Modul 12
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -49,6 +50,8 @@ kotlin {
 
             // Modul 12
             implementation(libs.ktorfit.lib)
+            implementation(libs.ktor.contentNegotiation)
+            implementation(libs.ktor.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
