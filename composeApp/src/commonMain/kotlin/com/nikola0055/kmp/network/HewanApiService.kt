@@ -9,21 +9,23 @@ import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.json.Json
 
-private const val BASE_URL = "https://raw.githubusercontent.com/" + "indraazimi/mobpro1-compose/static-api/"
+private const val BASE_URL = "https://gh.d3ifcool.org/"
 
 private val ktorfit = Ktorfit.Builder()
     .baseUrl(BASE_URL)
     .httpClient (
         HttpClient {
             install(ContentNegotiation) {
-                register(ContentType.Any, KotlinxSerializationConverter(Json))
+                register(ContentType.Any, KotlinxSerializationConverter(Json{
+                    ignoreUnknownKeys = true
+                }))
             }
         }
     )
     .build()
 
 interface HewanApiService {
-    @GET("static-api.json")
+    @GET("hewan.php")
     suspend fun getHewan(): List<Hewan>
 }
 
@@ -33,7 +35,7 @@ object HewanApi {
     }
 
     fun getHewanUrl(imageId: String): String {
-        return "${BASE_URL}$imageId.jpg"
+        return "${BASE_URL}image.php?id=$imageId"
     }
 }
 
