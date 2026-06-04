@@ -38,6 +38,8 @@ import com.nikola0055.kmp.network.HewanApi
 import kmp.composeapp.generated.resources.Res
 import kmp.composeapp.generated.resources.app_name
 import kmp.composeapp.generated.resources.gambar
+import kmp.composeapp.generated.resources.loading_img
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,6 +90,7 @@ fun ListItem(hewan: Hewan) {
                 .build(),
             contentDescription = stringResource(Res.string.gambar, hewan.nama),
             contentScale = ContentScale.Crop,
+            placeholder = painterResource(Res.drawable.loading_img),
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         )
         Column(
