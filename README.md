@@ -9,7 +9,7 @@
 | 8     | Navigate with Data      | Selesai       |
 | 9     | Room Database           | Selesai       |
 | 10    | Dialog and Preferences  | Selesai       |
-| 12    | Connect to the Internet | Belum Selesai |
-| 13    | Internet Best Practices | Belum Selesai |
+| 12    | Connect to the Internet | Selesai       |
+| 13    | Internet Best Practices | Selesai       |
 | 14    | Authenticate User       | Belum Selesai |
 | 15    | Sending Data to Server  | Belum Selesai |
