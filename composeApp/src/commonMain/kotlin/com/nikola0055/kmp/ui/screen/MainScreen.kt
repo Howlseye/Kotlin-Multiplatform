@@ -68,7 +68,7 @@ fun MainScreen() {
 
     var showDialog by remember { mutableStateOf(false) }
 
-    GoogleAuthProvider.create(
+    val googleAuthProvider = GoogleAuthProvider.create(
         credentials = GoogleAuthCredentials(serverId = BuildKonfig.API_KEY)
     )
 
@@ -129,6 +129,10 @@ fun MainScreen() {
                 user = user,
                 onDismissRequest = { showDialog = false }
             ) {
+                scope.launch {
+                    dataStore.saveData(User())
+                    googleAuthProvider.signOut()
+                }
                 showDialog = false
             }
         }

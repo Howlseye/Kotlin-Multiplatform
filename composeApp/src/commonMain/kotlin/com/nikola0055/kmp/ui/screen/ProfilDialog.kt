@@ -1,5 +1,6 @@
 package com.nikola0055.kmp.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,6 +80,16 @@ fun ProfilDialog(
                         modifier = Modifier.padding(8.dp)
                     ) {
                         Text(stringResource(Res.string.tutup))
+                    }
+                    OutlinedButton(
+                        onClick = { onConfirmation() },
+                        modifier = Modifier.padding(8.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.logout),
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
             }
