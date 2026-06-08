@@ -22,6 +22,10 @@ ksp = "2.3.4"
 ktor = "3.5.0"
 coil = "3.0.4"
 
+# Modul 14
+kmpAuth = "2.3.1"
+datastore = "1.2.0"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -49,6 +53,11 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 
+# Modul 14
+kmpAuth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "kmpAuth" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -61,3 +70,6 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+# Modul 14
+buildkonfig = { id = "com.codingfeline.buildkonfig", version = "0.21.2" }

@@ -1,5 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -12,6 +15,9 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.kotlinxSerialization)
+
+    // Modul 14
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -54,6 +60,11 @@ kotlin {
             implementation(libs.ktor.serialization.json)
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
+
+            // Modul 14
+            implementation(libs.kmpAuth.google)
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.androidx.datastore.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -106,4 +117,45 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+val localProperties = Properties().apply {
+    val propertiesFile = project.rootProject.file("local.properties")
+    if (propertiesFile.exists()) {
+        propertiesFile.inputStream().use { load(it) }
+    }
+}
+
+val googleClientId = localProperties.getProperty("API_KEY") ?: ""
+
+buildkonfig {
+    packageName = "com.nikola0055.kmp"
+
+    defaultConfigs {
+        buildConfigField(STRING, "API_KEY", googleClientId)
+    }
+}
+
+tasks.register("generateXcodeConfig") {
+    val propertiesFile = project.rootProject.file("local.properties")
+    val localProperties = Properties()
+    if (propertiesFile.exists()) {
+        propertiesFile.inputStream().use { localProperties.load(it) }
+    }
+
+    val iosId = localProperties.getProperty("IOS_API_KEY") ?: ""
+    val reversedIosId = iosId.split(".").reversed().joinToString(".")
+
+    val outputFile = project.rootProject.file("iosApp/GoogleConfig.xcconfig")
+
+    doLast {
+        outputFile.writeText("""
+            CLIENT_ID = $iosId
+            URL_SCHEME = $reversedIosId
+        """.trimIndent())
+    }
+}
+
+tasks.matching { it.name.startsWith("compileKotlinIos") }.configureEach {
+    dependsOn("generateXcodeConfig")
 }
