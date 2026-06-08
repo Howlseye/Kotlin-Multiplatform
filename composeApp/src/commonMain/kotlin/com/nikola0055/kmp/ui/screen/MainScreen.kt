@@ -26,8 +26,10 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,6 +65,8 @@ fun MainScreen() {
     val dataStore = remember { UserDataStore(createDataStore()) }
     val user by dataStore.userFlow.collectAsState(User())
     val scope = rememberCoroutineScope()
+
+    var showDialog by remember { mutableStateOf(false) }
 
     GoogleAuthProvider.create(
         credentials = GoogleAuthCredentials(serverId = BuildKonfig.API_KEY)
@@ -100,7 +104,7 @@ fun MainScreen() {
                             onClick = {
                                 scope.launch {
                                     if (user.email.isNotEmpty()) {
-                                        println("SIGN-IN\nUser: $user")
+                                        showDialog = true
                                     } else {
                                         this@GoogleButtonUiContainer.onClick()
                                     }
@@ -119,6 +123,15 @@ fun MainScreen() {
         }
     ) { innerPadding ->
         ScreenContent(Modifier.padding(innerPadding))
+
+        if (showDialog) {
+            ProfilDialog(
+                user = user,
+                onDismissRequest = { showDialog = false }
+            ) {
+                showDialog = false
+            }
+        }
     }
 }
 
