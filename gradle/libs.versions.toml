@@ -61,3 +61,6 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+# Modul 14
+buildkonfig = { id = "com.codingfeline.buildkonfig", version = "0.21.2" }

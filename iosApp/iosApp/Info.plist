@@ -4,5 +4,18 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
+	<key>GIDClientID</key>
+    <string>$(CLIENT_ID)</string>
+
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>$(URL_SCHEME)</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
