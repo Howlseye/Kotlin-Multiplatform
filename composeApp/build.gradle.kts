@@ -60,6 +60,9 @@ kotlin {
             implementation(libs.ktor.serialization.json)
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
+
+            // Modul 14
+            implementation(libs.kmpAuth.google)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

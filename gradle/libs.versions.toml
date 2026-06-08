@@ -22,6 +22,9 @@ ksp = "2.3.4"
 ktor = "3.5.0"
 coil = "3.0.4"
 
+# Modul 14
+kmpAuth = "2.3.1"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -48,6 +51,9 @@ ktor-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", 
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+
+# Modul 14
+kmpAuth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "kmpAuth" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

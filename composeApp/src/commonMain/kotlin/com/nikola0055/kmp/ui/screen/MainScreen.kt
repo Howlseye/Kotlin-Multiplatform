@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,16 +41,27 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.mmk.kmpauth.google.GoogleAuthCredentials
+import com.mmk.kmpauth.google.GoogleAuthProvider
+import com.mmk.kmpauth.google.GoogleButtonUiContainer
+import com.nikola0055.kmp.BuildKonfig
 import com.nikola0055.kmp.model.Hewan
 import com.nikola0055.kmp.network.ApiStatus
 import com.nikola0055.kmp.network.HewanApi
 import kmp.composeapp.generated.resources.*
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+    val scope = rememberCoroutineScope()
+
+    GoogleAuthProvider.create(
+        credentials = GoogleAuthCredentials(serverId = BuildKonfig.API_KEY)
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,7 +71,32 @@ fun MainScreen() {
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
-                )
+                ),
+                actions = {
+                    GoogleButtonUiContainer(
+                        onGoogleSignInResult = { googleUser ->
+                            if (googleUser != null) {
+                                println("Username: ${googleUser.displayName}\nEmail: ${googleUser.email}")
+                            } else {
+                                println("Authentication failed or was canceled.")
+                            }
+                        }
+                    ) {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    this@GoogleButtonUiContainer.onClick()
+                                }
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.account_circle_24),
+                                contentDescription = stringResource(Res.string.profil),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
             )
         }
     ) { innerPadding ->
