@@ -65,6 +65,11 @@ kotlin {
             implementation(libs.kmpAuth.google)
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.androidx.datastore.core)
+
+            // Modul 15
+            implementation(libs.imagePick.crop)
+            implementation(libs.compose.material)
+            implementation(libs.compose.icons.extended)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

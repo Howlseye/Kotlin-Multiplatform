@@ -26,6 +26,10 @@ coil = "3.0.4"
 kmpAuth = "2.3.1"
 datastore = "1.2.0"
 
+# Modul 15
+image-pick-n-crop = "1.1.4"
+composeIcons = "1.7.3"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -57,6 +61,11 @@ coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "
 kmpAuth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "kmpAuth" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+
+# Modul 15
+imagePick-crop = { module = "network.chaintech:cmp-image-pick-n-crop", version.ref = "image-pick-n-crop" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "composeMultiplatform" }
+compose-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeIcons" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
