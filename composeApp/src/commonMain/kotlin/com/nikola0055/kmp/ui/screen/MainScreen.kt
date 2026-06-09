@@ -79,9 +79,11 @@ fun MainScreen() {
         credentials = GoogleAuthCredentials(serverId = BuildKonfig.API_KEY)
     )
 
+    var showHewanDialog by remember { mutableStateOf(false) }
+    var openImagePicker by remember { mutableStateOf(false) }
+
     val imageCropper = rememberImageCropper()
     var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }
-    var openImagePicker by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -160,6 +162,19 @@ fun MainScreen() {
             }
         }
 
+        if (showHewanDialog) {
+            HewanDialog(
+                imageBitmap = selectedImage!!,
+                onDismissRequest = {
+                    showHewanDialog = false
+                },
+                onConfirmation = { nama, namaLatin ->
+                    println("Ditambahkan\nNama: $nama\nNama Latin: $namaLatin")
+                    showHewanDialog = false
+                }
+            )
+        }
+
         CMPImagePickNCropDialog(
             imageCropper = imageCropper,
             openImagePicker = openImagePicker,
@@ -170,6 +185,9 @@ fun MainScreen() {
                 openImagePicker = it
             },
             selectedImageCallback = {
+                val index = if (it.size >= 1) it.size - 1 else 0
+                selectedImage = it[index]
+                showHewanDialog = true
                 openImagePicker = false
             },
             selectedImageFileCallback = {}
