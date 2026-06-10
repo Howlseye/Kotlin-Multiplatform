@@ -4,9 +4,11 @@ import com.nikola0055.kmp.model.Hewan
 import com.nikola0055.kmp.model.OpStatus
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.http.Body
+import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Header
 import de.jensklingenberg.ktorfit.http.POST
+import de.jensklingenberg.ktorfit.http.Query
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -39,6 +41,12 @@ interface HewanApiService {
     suspend fun postHewan(
         @Header("Authorization") userId: String,
         @Body content: MultiPartFormDataContent
+    ): OpStatus
+
+    @DELETE("hewan.php")
+    suspend fun hapusHewan(
+        @Header("Authorization") userId: String,
+        @Query("id") id: String
     ): OpStatus
 }
 

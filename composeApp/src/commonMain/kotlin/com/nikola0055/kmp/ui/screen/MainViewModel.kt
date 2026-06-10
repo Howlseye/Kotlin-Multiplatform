@@ -35,8 +35,8 @@ class MainViewModel : ViewModel() {
                 data.value = HewanApi.service.getHewan(userId)
                 status.value = ApiStatus.SUCCESS
             } catch (e: Exception) {
-                println("MainViewModel - Failure: ${e.message}")
                 status.value = ApiStatus.FAILED
+                errorMessage.value = "Error: ${e.message}"
             }
         }
     }
@@ -61,6 +61,22 @@ class MainViewModel : ViewModel() {
                 )
 
                 val result = HewanApi.service.postHewan(userId, multipart)
+
+                if (result.status == "success")
+                    retrieveData(userId)
+                else
+                    throw Exception(result.message)
+            } catch (e: Exception) {
+                println("MainViewModel - Failure: ${e.message}")
+                errorMessage.value = "Error: ${e.message}"
+            }
+        }
+    }
+
+    fun deleteData(userId: String, id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val result = HewanApi.service.hapusHewan(userId, id)
 
                 if (result.status == "success")
                     retrieveData(userId)

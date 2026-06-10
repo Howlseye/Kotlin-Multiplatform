@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +29,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
@@ -226,9 +230,31 @@ fun ScreenContent(
 ) {
     val data by viewModel.data
     val status by viewModel.status.collectAsState()
+    var selectedHewan by remember { mutableStateOf<Hewan?>(null) }
 
     LaunchedEffect(userId) {
         viewModel.retrieveData(userId)
+    }
+
+    if (selectedHewan != null) {
+        AlertDialog(
+            onDismissRequest = { selectedHewan = null },
+            title = { Text(stringResource(Res.string.hapus)) },
+            text = { Text(stringResource(Res.string.konfirmasi_hapus)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.deleteData(userId, selectedHewan!!.id)
+                    selectedHewan = null
+                }) {
+                    Text(stringResource(Res.string.hapus))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { selectedHewan = null }) {
+                    Text(stringResource(Res.string.batal))
+                }
+            }
+        )
     }
 
     when (status) {
@@ -247,7 +273,11 @@ fun ScreenContent(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
-                items(data) { ListItem(hewan = it) }
+                items(data) {
+                    ListItem(hewan = it) {
+                        selectedHewan = it
+                    }
+                }
             }
         }
 
@@ -272,7 +302,7 @@ fun ScreenContent(
 }
 
 @Composable
-fun ListItem(hewan: Hewan) {
+fun ListItem(hewan: Hewan, hapusAction: () -> Unit) {
     Box(
         modifier = Modifier.padding(4.dp).border(1.dp, Color.Gray),
         contentAlignment = Alignment.BottomCenter
@@ -288,22 +318,39 @@ fun ListItem(hewan: Hewan) {
             error = painterResource(Res.drawable.broken_img),
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         )
-        Column(
+        Row(
             modifier = Modifier.fillMaxWidth().padding(4.dp)
                 .background(Color(red = 0f, green = 0f, blue = 0f, alpha = 0.5f))
-                .padding(4.dp)
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = hewan.nama,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                text = hewan.namaLatin,
-                fontStyle = FontStyle.Italic,
-                fontSize = 14.sp,
-                color = Color.White
-            )
+            Column(modifier = Modifier.padding(4.dp)) {
+                Text(
+                    text = hewan.nama,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = hewan.namaLatin,
+                    fontStyle = FontStyle.Italic,
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+
+            if (hewan.mine == 1) {
+                IconButton(
+                    onClick = hapusAction,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.hapus),
+                        tint = Color.LightGray
+                    )
+                }
+            }
         }
     }
 }
