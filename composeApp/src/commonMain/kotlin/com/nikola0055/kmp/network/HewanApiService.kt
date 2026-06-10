@@ -31,7 +31,9 @@ private val ktorfit = Ktorfit.Builder()
 
 interface HewanApiService {
     @GET("hewan.php")
-    suspend fun getHewan(): List<Hewan>
+    suspend fun getHewan(
+        @Header("Authorization") userId: String
+    ): List<Hewan>
 
     @POST("hewan.php")
     suspend fun postHewan(

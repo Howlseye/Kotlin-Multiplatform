@@ -28,15 +28,11 @@ class MainViewModel : ViewModel() {
     var errorMessage = mutableStateOf<String?>(null)
         private set
 
-    init {
-        retrieveData()
-    }
-
-    fun retrieveData() {
+    fun retrieveData(userId: String) {
         viewModelScope.launch {
             status.value = ApiStatus.LOADING
             try {
-                data.value = HewanApi.service.getHewan()
+                data.value = HewanApi.service.getHewan(userId)
                 status.value = ApiStatus.SUCCESS
             } catch (e: Exception) {
                 println("MainViewModel - Failure: ${e.message}")
@@ -67,7 +63,7 @@ class MainViewModel : ViewModel() {
                 val result = HewanApi.service.postHewan(userId, multipart)
 
                 if (result.status == "success")
-                    retrieveData()
+                    retrieveData(userId)
                 else
                     throw Exception(result.message)
             } catch (e: Exception) {
