@@ -1,10 +1,15 @@
 package com.nikola0055.kmp.network
 
 import com.nikola0055.kmp.model.Hewan
+import com.nikola0055.kmp.model.OpStatus
 import de.jensklingenberg.ktorfit.Ktorfit
+import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.Header
+import de.jensklingenberg.ktorfit.http.POST
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.json.Json
@@ -27,6 +32,12 @@ private val ktorfit = Ktorfit.Builder()
 interface HewanApiService {
     @GET("hewan.php")
     suspend fun getHewan(): List<Hewan>
+
+    @POST("hewan.php")
+    suspend fun postHewan(
+        @Header("Authorization") userId: String,
+        @Body content: MultiPartFormDataContent
+    ): OpStatus
 }
 
 object HewanApi {

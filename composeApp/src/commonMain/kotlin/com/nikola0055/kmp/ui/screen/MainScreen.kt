@@ -22,6 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -72,18 +75,21 @@ fun MainScreen() {
     val dataStore = remember { UserDataStore(createDataStore()) }
     val user by dataStore.userFlow.collectAsState(User())
     val scope = rememberCoroutineScope()
-
-    var showDialog by remember { mutableStateOf(false) }
-
     val googleAuthProvider = GoogleAuthProvider.create(
         credentials = GoogleAuthCredentials(serverId = BuildKonfig.API_KEY)
     )
 
-    var showHewanDialog by remember { mutableStateOf(false) }
-    var openImagePicker by remember { mutableStateOf(false) }
+    val viewModel: MainViewModel = viewModel{ MainViewModel() }
+    val errorMessage by viewModel.errorMessage
 
+    var showDialog by remember { mutableStateOf(false) }
+    var showHewanDialog by remember { mutableStateOf(false) }
+
+    var openImagePicker by remember { mutableStateOf(false) }
     val imageCropper = rememberImageCropper()
     var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         topBar = {
@@ -143,9 +149,15 @@ fun MainScreen() {
                     contentDescription = stringResource(Res.string.tambah_hewan)
                 )
             }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
         }
     ) { innerPadding ->
-        ScreenContent(Modifier.padding(innerPadding))
+        ScreenContent(viewModel, Modifier.padding(innerPadding))
 
         if (showDialog) {
             ProfilDialog(
@@ -160,19 +172,6 @@ fun MainScreen() {
                 }
                 showDialog = false
             }
-        }
-
-        if (showHewanDialog) {
-            HewanDialog(
-                imageBitmap = selectedImage!!,
-                onDismissRequest = {
-                    showHewanDialog = false
-                },
-                onConfirmation = { nama, namaLatin ->
-                    println("Ditambahkan\nNama: $nama\nNama Latin: $namaLatin")
-                    showHewanDialog = false
-                }
-            )
         }
 
         CMPImagePickNCropDialog(
@@ -190,16 +189,39 @@ fun MainScreen() {
                 showHewanDialog = true
                 openImagePicker = false
             },
-            selectedImageFileCallback = {}
+            selectedImageFileCallback = { }
         )
+
+        if (showHewanDialog) {
+            HewanDialog(
+                imageBitmap = selectedImage!!,
+                onDismissRequest = {
+                    showHewanDialog = false
+                },
+                onConfirmation = { nama, namaLatin ->
+                    viewModel.saveData(user.email, nama, namaLatin, selectedImage!!)
+                    showHewanDialog = false 
+                }
+            )
+        }
+
+        if (errorMessage != null) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = errorMessage!!,
+                    duration = SnackbarDuration.Short
+                )
+                viewModel.clearMessage()
+            }
+        }
     }
 }
 
 @Composable
 fun ScreenContent(
+    viewModel: MainViewModel,
     modifier: Modifier
 ) {
-    val viewModel: MainViewModel = viewModel { MainViewModel() }
     val data by viewModel.data
     val status by viewModel.status.collectAsState()
 
