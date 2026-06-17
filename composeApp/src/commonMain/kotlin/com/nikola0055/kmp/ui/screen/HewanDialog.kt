@@ -27,18 +27,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import kmp.composeapp.generated.resources.*
+import kmp.composeapp.generated.resources.Res
+import kmp.composeapp.generated.resources.batal
+import kmp.composeapp.generated.resources.gambar
+import kmp.composeapp.generated.resources.nama
+import kmp.composeapp.generated.resources.nama_latin
+import kmp.composeapp.generated.resources.simpan
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HewanDialog(
-    imageBitmap: ImageBitmap?,
+    image: Painter?,
     onDismissRequest: () -> Unit,
     onConfirmation: (String, String) -> Unit
 ) {
@@ -59,10 +64,10 @@ fun HewanDialog(
                     modifier = Modifier.fillMaxWidth().aspectRatio(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (imageBitmap != null) {
+                    if (image != null) {
                         Image(
-                            bitmap = imageBitmap,
-                            contentDescription = null,
+                            painter = image,
+                            contentDescription = stringResource(Res.string.gambar),
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
@@ -75,7 +80,7 @@ fun HewanDialog(
                     }
                 }
 
-                OutlinedTextField(
+                    OutlinedTextField(
                     value = nama,
                     onValueChange = { nama = it },
                     label = { Text(stringResource(Res.string.nama)) },
@@ -129,7 +134,7 @@ fun HewanDialog(
 fun HewanDialogPreviewLight() {
     MaterialTheme {
         HewanDialog(
-            imageBitmap = null,
+            image = null,
             onDismissRequest = {},
             onConfirmation = { _, _ -> }
         )
@@ -141,7 +146,7 @@ fun HewanDialogPreviewLight() {
 fun HewanDialogPreviewDark() {
     MaterialTheme(colorScheme = darkColorScheme()) {
         HewanDialog(
-            imageBitmap = null,
+            image = null,
             onDismissRequest = {},
             onConfirmation = { _, _ -> }
         )

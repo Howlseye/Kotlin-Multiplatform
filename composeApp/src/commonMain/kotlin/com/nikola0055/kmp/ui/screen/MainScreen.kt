@@ -2,6 +2,7 @@ package com.nikola0055.kmp.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.PhotoCamera
+import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,6 +27,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -33,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,7 +49,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -66,11 +70,31 @@ import com.nikola0055.kmp.model.User
 import com.nikola0055.kmp.network.ApiStatus
 import com.nikola0055.kmp.network.HewanApi
 import com.nikola0055.kmp.network.UserDataStore
-import kmp.composeapp.generated.resources.*
+import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
+import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
+import io.github.ismoy.imagepickerkmp.domain.config.GalleryConfig
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadPainter
+import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
+import io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
+import io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState
+import io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
+import kmp.composeapp.generated.resources.Res
+import kmp.composeapp.generated.resources.account_circle_24
+import kmp.composeapp.generated.resources.app_name
+import kmp.composeapp.generated.resources.batal
+import kmp.composeapp.generated.resources.broken_img
+import kmp.composeapp.generated.resources.error
+import kmp.composeapp.generated.resources.gambar
+import kmp.composeapp.generated.resources.hapus
+import kmp.composeapp.generated.resources.konfirmasi_hapus
+import kmp.composeapp.generated.resources.loading_img
+import kmp.composeapp.generated.resources.profil
+import kmp.composeapp.generated.resources.tambah_hewan
+import kmp.composeapp.generated.resources.try_again
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import network.chaintech.cmpimagepickncrop.CMPImagePickNCropDialog
-import network.chaintech.cmpimagepickncrop.imagecropper.ImageAspectRatio
-import network.chaintech.cmpimagepickncrop.imagecropper.rememberImageCropper
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -90,9 +114,25 @@ fun MainScreen() {
     var showDialog by remember { mutableStateOf(false) }
     var showHewanDialog by remember { mutableStateOf(false) }
 
-    var openImagePicker by remember { mutableStateOf(false) }
-    val imageCropper = rememberImageCropper()
-    var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }
+    var showPicker by remember { mutableStateOf(false) }
+    var selectedImage by remember { mutableStateOf<PhotoResult?>(null) }
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+
+            ),
+            galleryConfig = GalleryConfig(
+
+            ),
+            cropConfig = CropConfig(
+                enabled = true,
+                aspectRatioLocked = true,
+                squareCrop = true,
+                circularCrop = false,
+                freeformCrop = false
+            ),
+        )
+    )
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -147,7 +187,9 @@ fun MainScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { openImagePicker = true }
+                onClick = {
+                    showPicker = true
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -179,32 +221,36 @@ fun MainScreen() {
             }
         }
 
-        CMPImagePickNCropDialog(
-            imageCropper = imageCropper,
-            openImagePicker = openImagePicker,
-            defaultAspectRatio = ImageAspectRatio(1, 1),
-            aspects = listOf(ImageAspectRatio(1, 1)),
-            shapes = emptyList(),
-            imagePickerDialogHandler = {
-                openImagePicker = it
-            },
-            selectedImageCallback = {
-                val index = if (it.size >= 1) it.size - 1 else 0
-                selectedImage = it[index]
-                showHewanDialog = true
-                openImagePicker = false
-            },
-            selectedImageFileCallback = { }
-        )
+        if (showPicker) {
+            ImagePickerDialog(
+                onDismissRequest = {
+                    showPicker = false
+                },
+                picker = picker
+            )
+        }
+        
+        when (picker.result) {
+            is ImagePickerResult.Success -> {
+                selectedImage = (picker.result as ImagePickerResult.Success).first
+                picker.reset()
+                scope.launch {
+                    delay(500)
+                    showPicker = false
+                    showHewanDialog = true
+                }
+            }
+            else -> {}
+        }
 
         if (showHewanDialog) {
             HewanDialog(
-                imageBitmap = selectedImage!!,
+                image = selectedImage?.loadPainter(),
                 onDismissRequest = {
                     showHewanDialog = false
                 },
                 onConfirmation = { nama, namaLatin ->
-                    viewModel.saveData(user.email, nama, namaLatin, selectedImage!!)
+                    viewModel.saveData(user.email, nama, namaLatin, selectedImage!!.loadBytes())
                     showHewanDialog = false 
                 }
             )
@@ -350,6 +396,59 @@ fun ListItem(hewan: Hewan, hapusAction: () -> Unit) {
                         tint = Color.LightGray
                     )
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ImagePickerDialog(onDismissRequest: () -> Unit, picker: ImagePickerKMPState) {
+    val sheetState = rememberModalBottomSheetState()
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxWidth().padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Text(
+                text = "Pilih Sumber Gambar",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .clickable { 
+                        picker.launchCamera()
+                        onDismissRequest()
+                    }
+                    .padding(vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.PhotoCamera,
+                    modifier = Modifier.padding(end = 16.dp),
+                    contentDescription = "Camera"
+                )
+                Text("Camera")
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .clickable { 
+                        picker.launchGallery()
+                        onDismissRequest()
+                    }
+                    .padding(vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.PhotoLibrary,
+                    modifier = Modifier.padding(end = 16.dp),
+                    contentDescription = "Gallery"
+                )
+                Text("Gallery")
             }
         }
     }

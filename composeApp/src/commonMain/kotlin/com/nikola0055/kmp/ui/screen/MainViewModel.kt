@@ -1,13 +1,11 @@
 package com.nikola0055.kmp.ui.screen
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikola0055.kmp.model.Hewan
 import com.nikola0055.kmp.network.ApiStatus
 import com.nikola0055.kmp.network.HewanApi
-import com.nikola0055.kmp.toJpegByteArray
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -41,16 +39,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun saveData(userId: String, nama: String, namaLatin: String, bitmap: ImageBitmap) {
+    fun saveData(userId: String, nama: String, namaLatin: String, bitmap: ByteArray) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val byteArray = bitmap.toJpegByteArray()
+//                val byteArray = bitmap.toJpegByteArray()
 
                 val multipart = MultiPartFormDataContent(
                     formData {
                         append("nama", nama)
                         append("namaLatin", namaLatin)
-                        append("image", byteArray, Headers.build {
+                        append("image", bitmap, Headers.build {
                             append(HttpHeaders.ContentType, "image/jpeg")
                             append(
                                 HttpHeaders.ContentDisposition,

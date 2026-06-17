@@ -27,7 +27,7 @@ kmpAuth = "2.3.1"
 datastore = "1.2.0"
 
 # Modul 15
-image-pick-n-crop = "1.1.4"
+imagepickerkmp = "1.0.41"
 composeIcons = "1.7.3"
 
 [libraries]
@@ -63,7 +63,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 
 # Modul 15
-imagePick-crop = { module = "network.chaintech:cmp-image-pick-n-crop", version.ref = "image-pick-n-crop" }
+imagepickerkmp = { module = "io.github.ismoy:imagepickerkmp", version.ref = "imagepickerkmp" }
 compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "composeMultiplatform" }
 compose-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeIcons" }
 
